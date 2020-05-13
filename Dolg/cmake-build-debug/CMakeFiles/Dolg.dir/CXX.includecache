@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ivan/CLionProjects/Dolg/Engine.h
+math.h
+-
+vector
+-
+memory
+-
+iostream
+-
+ncurses.h
+-
+
+/home/ivan/CLionProjects/Dolg/main.cpp
+Engine.h
+/home/ivan/CLionProjects/Dolg/Engine.h
+string.h
+-
+

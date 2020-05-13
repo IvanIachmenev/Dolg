@@ -1,0 +1,1 @@
+/usr/bin/c++   -fsanitize=address -g   CMakeFiles/Dolg.dir/main.cpp.o CMakeFiles/Dolg.dir/map.cpp.o CMakeFiles/Dolg.dir/Player.cpp.o CMakeFiles/Dolg.dir/Engine.cpp.o  -o Dolg  -lcurses /usr/lib/x86_64-linux-gnu/libform.so 

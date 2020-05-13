@@ -1,0 +1,1 @@
+/usr/bin/c++   -fsanitize=address -g   CMakeFiles/rogue_like.dir/main.cpp.o  -o rogue_like  -lcurses /usr/lib/x86_64-linux-gnu/libform.so 
