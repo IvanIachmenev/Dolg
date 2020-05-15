@@ -23,13 +23,24 @@ Map::Map(int s) : size(s){
 }
 
 void Map::DrawMap() {
+    addch(' ');
+    addch(' ');
+    for(int i = 0; i < size+2; i++){
+        printw("%i ", i+1);
+    }
+    addch('Y');
+    addch('\n');
     for(int i = 0; i < size+2; ++i){
+        printw("%i ", i+1);
         for(int j = 0; j < size+2; ++j){
             addch(map[i][j]);
             addch(' ');
         }
         addch('\n');
     }
+    addch('X');
+    addch('\n');
+    addch('\n');
 }
 
 std::vector<std::vector<char> > Map::getMap() {

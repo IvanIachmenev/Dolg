@@ -26,16 +26,16 @@ class Player{
 private:
     char color;
     int amount;
-    std::vector<std::vector<bool>> steps;
+    std::vector<int> steps;
 //    Coordinates coordinates;
 public:
     Player(char, int);
     Player setAmount(int);
     int getAmount();
     char getColor();
-    void ClearMoves();
-    std::vector<std::vector<bool>> getSteps();
-    void setPossibleMoves(int, int);
+    void setSteps(std::vector<int>);
+    std::vector<int> getSteps();
+    void ClearSteps();
 };
 
 class Engine {
@@ -45,5 +45,6 @@ public:
     int Step(Coordinates, Map&, Player&);
     int NumberOfTurns(Coordinates, Map&, Player&);
     int getAmountPlayer(Player);
-    int PossibleMoves(Player&, Map);
+    std::vector<int> PossibleMoves(Player&, Map&);
+    std::vector<int> PossibleMoves(Player &player, Map &map, char c);
 };

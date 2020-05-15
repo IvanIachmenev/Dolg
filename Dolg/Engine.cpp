@@ -2,153 +2,114 @@
 
 
 int Engine::Step(Coordinates _coordinates, Map &_map, Player &_player) {
-    _map.Step(_coordinates.x, _coordinates.y, _player.getColor());
-    int amount = NumberOfTurns(_coordinates, _map, _player);
-    _player.ClearMoves();
-    PossibleMoves(_player, _map);
+//    _map.Step(_coordinates.x, _coordinates.y, _player.getColor());
+//    int amount = NumberOfTurns(_coordinates, _map, _player);
+//    PossibleMoves(_player, _map);
 
-    return amount;
+    return 0;
 }
 
 int Engine::getAmountPlayer(Player p) {
     return p.getAmount();
 }
 
-int Engine::PossibleMoves(Player &player, Map map) {
+std::vector<int> Engine::PossibleMoves(Player &player, Map &map) {
     std::vector<std::vector<char>> _map = map.getMap();
     int size = map.getSize();
-    char color = player.getColor();
-    int cnt = 0;
-    //right
-    for(int  i = 1; i < size; ++i){
-        for(int j = 1; j < size; ++j){
-            if(_map[i][j] == color){
-                for(int k = j+1; k < size; ++k){
-                    if((_map[i][k] != color && _map[i][k] != '.' && _map[i][k] != '#') && _map[i][k+1] == '.'){
-                        player.setPossibleMoves(i, k+1);
-                        cnt++;
+
+    int dx[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+    int dy[8] = {1, -1, 0, 0, 1, -1, -1, 1};
+    std::vector<int> s;
+    for(int i = 1; i < size; ++i){
+        for(int j = 1; j < _map[i].size(); ++j){
+            if(_map[i][j] != (player.getColor() ? 'B' : 'W')) continue;
+
+            for(int k = 0; k < 8; ++k){
+                int path_length = 0;
+                bool found_empty = false;
+
+                int ni = i + dx[k], nj = j + dy[k];
+                while(ni >= 0 && nj >= 0 && ni < size && nj < _map[ni].size()){
+                    if(_map[ni][nj] == '.'){
+                        found_empty = true;
                         break;
                     }
+
+                    if(_map[ni][nj] == (player.getColor() ? 'B' : 'W')){
+                        break;
+                    }
+                    path_length++;
+                    ni = ni + dx[k];
+                    nj = nj + dy[k];
+                }
+
+                if(found_empty && path_length > 0) {
+                    s.emplace_back(nj);
+                    s.emplace_back(ni);
+                    s.emplace_back(j);
+                    s.emplace_back(i);
                 }
             }
         }
     }
 
-//    down
-    for(int j = 1; j < size; ++j){
-        for(int i = 1; i < size; ++i){
-            if(_map[i][j] == color){
-                for(int k = i+1; k < size; ++k){
-                    if((_map[k][j] != color && _map[k][j] != '.' && _map[k][j] != '#') && _map[k+1][j] == '.'){
-                        player.setPossibleMoves(k+1, j);
-                        cnt++;
+    player.setSteps(s);
+
+    return s;
+}
+
+std::vector<int> Engine::PossibleMoves(Player &player, Map &map, char c) {
+    std::vector<std::vector<char>> _map = map.getMap();
+    int size = map.getSize();
+
+    int dx[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+    int dy[8] = {1, -1, 0, 0, 1, -1, -1, 1};
+    std::vector<int> s;
+    for(int i = 1; i < size; ++i){
+        for(int j = 1; j < _map[i].size(); ++j){
+            if(_map[i][j] != (player.getColor() ? 'W' : 'B')) continue;
+
+            for(int k = 0; k < 8; ++k){
+                int path_length = 0;
+                bool found_empty = false;
+
+                int ni = i + dx[k], nj = j + dy[k];
+                while(ni >= 0 && nj >= 0 && ni < size && nj < _map[ni].size()){
+                    if(_map[ni][nj] == '.'){
+                        found_empty = true;
                         break;
                     }
+
+                    if(_map[ni][nj] == (player.getColor() ? 'W' : 'B')){
+                        break;
+                    }
+                    path_length++;
+                    ni = ni + dx[k];
+                    nj = nj + dy[k];
+                }
+
+                if(found_empty && path_length > 0) {
+                    s.emplace_back(nj);
+                    s.emplace_back(ni);
+                    s.emplace_back(j);
+                    s.emplace_back(i);
                 }
             }
         }
     }
 
-//    left
-    for(int i = size; i > 1; --i){
-        for(int j = size; j > 1; --j){
-            if(_map[i][j] == color){
-                for(int k = j-1; k > 1; --k){
-                    if((_map[i][k] != color && _map[i][k] != '.' && _map[i][k] != '#') && _map[i][k-1] == '.'){
-                        player.setPossibleMoves(i, k-1);
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    player.setSteps(s);
 
-    //down rigth
-    for(int  i = 1; i < size; ++i){
-        for(int j = 1; j < size; ++j) {
-            if(_map[i][j] == color){
-                for(int k = i+1, l = j+1; k < size && l < size; ++k, ++l){
-                    if((_map[k][l] != color && _map[k][l] != '.' && _map[k][l] != '#') && _map[k+1][l+1] == '.'){
-                        player.setPossibleMoves(k+1, l+1);
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    //up
-    for(int j = size; j > 1; --j){
-        for(int i = size; i > 1; --i){
-            if(_map[i][j] == color){
-                for(int k = i-1; k > 1; --k){
-                    if((_map[k][j] != color && _map[k][j] != '.' && _map[k][j] != '#') && _map[k-1][j] == '.'){
-                        player.setPossibleMoves(k-1, j);
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-
-    //up rigth
-    for(int  i = 1; i < size; ++i){
-        for(int j = 1; j < size; ++j) {
-            if(_map[i][j] == color){
-                for(int k = i-1, l = j+1; k > 1 && l < size; --k, ++l){
-                    if((_map[k][l] != color && _map[k][l] != '.' && _map[k][l] != '#') && _map[k-1][l+1] == '.'){
-                        player.setPossibleMoves(k-1, l+1);
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    //down left
-    for(int  i = 1; i < size; ++i){
-        for(int j = 1; j < size; ++j) {
-            if(_map[i][j] == color){
-                for(int k = i+1, l = j-1; k < size && l > 1; ++k, --l){
-                    if((_map[k][l] != color && _map[k][l] != '.' && _map[k][l] != '#') && _map[k+1][l-1] == '.'){
-                        player.setPossibleMoves(k+1, l-1);
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    //up left
-    for(int i = size; i > 1; --i){
-        for(int j = size; j > 0; --j){
-            if(_map[i][j] == color){
-                for(int k = i-1, l = j-1; k > 1 && l > 1; --k, --l){
-                    if((_map[k][l] != color && _map[k][l] != '.' && _map[k][l] != '#') && _map[k-1][l-1] == '.'){
-                        player.setPossibleMoves(k-1, l-1);
-                        cnt++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    return cnt;
+    return s;
 }
 
 int Engine::NumberOfTurns(Coordinates _coordinates, Map& _map, Player& player) {
+    Coordinates coordinatesEnd;
+    std::vector<std::vector<char>> map = _map.getMap();
+
     int count = 0;
     int amount = 0;
     bool flag = false;
-    std::vector<std::vector<char>> map = _map.getMap();
-    std::vector<std::vector<bool>> steps = player.getSteps();
     char color = player.getColor();
 
 
@@ -199,7 +160,7 @@ int Engine::NumberOfTurns(Coordinates _coordinates, Map& _map, Player& player) {
     //left
     for(int i = _coordinates.y+1; i < _map.getSize(); ++i){
         if(map[_coordinates.x][i] != color && map[_coordinates.x][i] != '.' && map[_coordinates.y][i] != '#'){
-                count++;
+            count++;
         }else{
             if(map[_coordinates.x][i] == color){
                 flag = true;
@@ -326,7 +287,6 @@ int Engine::NumberOfTurns(Coordinates _coordinates, Map& _map, Player& player) {
             _map.Step(i, j, color);
         }
     }
-
 
     return amount;
 }
